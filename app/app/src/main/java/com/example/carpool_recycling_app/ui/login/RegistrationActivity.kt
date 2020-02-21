@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
 import com.example.carpool_recycling_app.R
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -14,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 
 class RegistrationActivity : AppCompatActivity() {
+    val TAG = "debug"
     private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,22 +20,20 @@ class RegistrationActivity : AppCompatActivity() {
         val button = findViewById<Button>(R.id.submit)
         val emailView = findViewById<EditText>(R.id.email)
         val passwordView = findViewById<EditText>(R.id.password)
-        auth = FirebaseAuth.getInstance()
-//        auth.createUserWithEmailAndPassword()
         button?.setOnClickListener{
             createUser(emailView.text.toString(), passwordView.text.toString())
         }
     }
 
     private fun createUser(email: String, password: String) {
-        Log.d("registration", "Email is $email password is $password")
         auth = FirebaseAuth.getInstance()
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task: Task<AuthResult> ->
             if (task.isSuccessful) {
                 //Registration OK
                 val firebaseUser = auth.currentUser!!
+                Log.d(TAG, firebaseUser?.toString())
             } else {
-                Log.d("registration", "Sign up failed")
+                Log.d(TAG, "Sign up failed")
             }
         }
     }
