@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "87438145066-hlblfp0885fan6li910sp9lctv3ilr3a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.carpool_recycling_app",
+            "certificate_hash": "ad70469ebc1640ca17fe7aed632981e584fbd92c"
+          }
+        },
+        {
           "client_id": "87438145066-l7pqgv51f1noafor939voljis62guq92.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
