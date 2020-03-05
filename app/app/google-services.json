@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "87438145066",
+    "firebase_url": "https://carpool-recycling.firebaseio.com",
+    "project_id": "carpool-recycling",
+    "storage_bucket": "carpool-recycling.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87438145066:android:5628425a01aae7b8fe7553",
+        "android_client_info": {
+          "package_name": "com.example.carpool_recycling_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "87438145066-hlblfp0885fan6li910sp9lctv3ilr3a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.carpool_recycling_app",
+            "certificate_hash": "ad70469ebc1640ca17fe7aed632981e584fbd92c"
+          }
+        },
+        {
+          "client_id": "87438145066-l7pqgv51f1noafor939voljis62guq92.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.carpool_recycling_app",
+            "certificate_hash": "8ac4b27060cc7a20e5b51a66fa9a0a625b243682"
+          }
+        },
+        {
+          "client_id": "87438145066-ekusnfpgr0p1d9osscthjgs7f8c79u3q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBV7SbmcNFJQGMbN19aP-opVJUeWQhJ-rY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "87438145066-ekusnfpgr0p1d9osscthjgs7f8c79u3q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
