@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val signOut = findViewById<Button>(R.id.signOut)
+        val createGroup = findViewById<Button>(R.id.create_group_button)
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
         if (currentUser == null) {
@@ -37,6 +38,9 @@ class MainActivity : AppCompatActivity() {
                 toast.show()
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
+            }
+            createGroup.setOnClickListener{
+                // here is where we are going to jump to the create group view
             }
         }
     }
