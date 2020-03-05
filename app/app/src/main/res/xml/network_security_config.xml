@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
 
-</PreferenceScreen>
+    </base-config>
+</network-security-config>

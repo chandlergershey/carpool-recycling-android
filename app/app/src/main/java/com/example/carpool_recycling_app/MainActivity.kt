@@ -41,6 +41,8 @@ class MainActivity : AppCompatActivity() {
             }
             createGroup.setOnClickListener{
                 // here is where we are going to jump to the create group view
+                val intent = Intent(this, CreateGroupActivity::class.java)
+                startActivity(intent)
             }
         }
     }
