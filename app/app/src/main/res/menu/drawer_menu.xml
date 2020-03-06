@@ -9,9 +9,9 @@
             android:icon="@drawable/ic_message"
             android:title="Message" />
         <item
-            android:id="@+id/nav_chat"
-            android:icon="@drawable/ic_chat"
-            android:title="Chat" />
+            android:id="@+id/nav_create_group"
+            android:icon="@drawable/ic_group"
+            android:title="Create Group" />
         <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_profile"
@@ -25,9 +25,9 @@
                 android:icon="@drawable/ic_share"
                 android:title="Share" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_send"
-                android:title="Send" />
+                android:id="@+id/nav_sign_out"
+                android:icon="@drawable/ic_signout"
+                android:title="Sign Out" />
         </menu>
     </item>
 

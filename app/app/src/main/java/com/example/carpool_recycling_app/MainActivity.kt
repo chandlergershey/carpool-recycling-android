@@ -44,8 +44,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
     override fun onStart() {
         super.onStart()
-        val signOut = findViewById<Button>(R.id.signOut)
-        val createGroup = findViewById<Button>(R.id.create_group_button)
+//        val signOut = findViewById<Button>(R.id.signOut)
+//        val createGroup = findViewById<Button>(R.id.create_group_button)
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
         if (currentUser == null) {
@@ -55,18 +55,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         else{
             Log.d(TAG, "User is logged in")
-            signOut.setOnClickListener{
-                auth.signOut()
-                val toast = Toast.makeText(applicationContext, "Signed out", Toast.LENGTH_SHORT)
-                toast.show()
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-            }
-            createGroup.setOnClickListener{
-                // here is where we are going to jump to the create group view
-                val intent = Intent(this, CreateGroupActivity::class.java)
-                startActivity(intent)
-            }
+//            signOut.setOnClickListener{
+//                auth.signOut()
+//                val toast = Toast.makeText(applicationContext, "Signed out", Toast.LENGTH_SHORT)
+//                toast.show()
+//                val intent = Intent(this, LoginActivity::class.java)
+//                startActivity(intent)
+//            }
+//            createGroup.setOnClickListener{
+//                // here is where we are going to jump to the create group view
+//                val intent = Intent(this, CreateGroupActivity::class.java)
+//                startActivity(intent)
+//            }
         }
     }
 
@@ -75,8 +75,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_profile -> {
                 Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show()
             }
-            R.id.nav_profile -> {
+            R.id.nav_create_group -> {
                 Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, CreateGroupActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_profile -> {
                 Toast.makeText(this, "Friends clicked", Toast.LENGTH_SHORT).show()
@@ -84,8 +86,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_profile -> {
                 Toast.makeText(this, "Update clicked", Toast.LENGTH_SHORT).show()
             }
-            R.id.nav_profile -> {
+            R.id.nav_sign_out -> {
                 Toast.makeText(this, "Sign out clicked", Toast.LENGTH_SHORT).show()
+                auth.signOut()
+                val toast = Toast.makeText(applicationContext, "Signed out", Toast.LENGTH_SHORT)
+                toast.show()
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
             }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
