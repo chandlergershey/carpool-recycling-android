@@ -20,6 +20,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.gson.GsonBuilder
+
 
 var mLocationPermissionGranted = false
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -74,6 +76,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+
+    internal class RecyclingCenter(
+        val name: String,
+        val address: String,
+        val openNow: Boolean
+    ) {
+    }
+
+    internal class Centers(
+        var candidates: ArrayList<RecyclingCenter> = ArrayList(),
+        var status: String
+    ) {
+
+    }
+
+
     private fun recyclingLocationRequest(latitude : Double, longitude : Double) {
                 val TAG = "recyclingHTTPRequest"
                 val queue = Volley.newRequestQueue(this)
@@ -87,18 +105,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 val fullQuery = url + input + inputType + fields + radius + apiKey
                 Log.d("APICall", fullQuery)
 
+
         // Request a string response from the provided URL.
                 val stringRequest = StringRequest(
                     Request.Method.GET, fullQuery,
                     Response.Listener<String> { response ->
                         val a = response
-                        Log.d("APICall", a.toString())
+                        Log.d("json", a)
+                        val builder = GsonBuilder()
+                        builder.setPrettyPrinting()
+                        val gson = builder.create()
+                        val places: Centers = gson.fromJson(response, Centers::class.java)
                     },
                     Response.ErrorListener { Log.d(TAG, "HTTP request failed") })
         // Add the request to the RequestQueue.
                 queue.add(stringRequest)
+    }
 
-
+    private fun parseResponse(center : RecyclingCenter){
+        val a = ""
     }
 
     private fun getPermissions() {
