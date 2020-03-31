@@ -78,8 +78,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     internal class RecyclingCenter(
+        val formatted_address: String, //Variable naming has to match the JSON values perfectly, hence the naming convention change
+        val geometry : Geometry,
         val name: String,
-        val address: String,
         val openNow: Boolean
     ) {
     }
@@ -88,8 +89,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         var candidates: ArrayList<RecyclingCenter> = ArrayList(),
         var status: String
     ) {
+    }
+
+    internal class Geometry(
+        val location : LocationJson,
+        val viewport : Viewport
+    ){
 
     }
+
+    internal class LocationJson(
+        val lat : Double,
+        val lng : Double
+    ){
+
+    }
+
+    internal class Viewport(
+        val northeast : LocationJson,
+        val southwest : LocationJson
+    )
 
 
     private fun recyclingLocationRequest(latitude : Double, longitude : Double) {
@@ -98,7 +117,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 val url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input="
                 val input = "Recycling%20Center"
                 val inputType = "&inputtype=textquery"
-                val fields = "&fields=formatted_address,name,opening_hours"
+                val fields = "&fields=formatted_address,name,opening_hours,geometry"
                 val radius = "&circle:32186@$latitude,$longitude"
                 val key = this.resources.getString(R.string.google_places_api_key)
                 val apiKey = "&key=$key"
@@ -116,14 +135,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         builder.setPrettyPrinting()
                         val gson = builder.create()
                         val places: Centers = gson.fromJson(response, Centers::class.java)
+                        parseResponse(places)
                     },
                     Response.ErrorListener { Log.d(TAG, "HTTP request failed") })
         // Add the request to the RequestQueue.
                 queue.add(stringRequest)
     }
 
-    private fun parseResponse(center : RecyclingCenter){
+    private fun parseResponse(center : Centers){
         val a = ""
+        for (center in center.candidates){
+            
+        }
     }
 
     private fun getPermissions() {
