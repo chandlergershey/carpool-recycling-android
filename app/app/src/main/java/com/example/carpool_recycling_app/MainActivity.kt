@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.Toast
 import com.example.carpool_recycling_app.ui.login.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 val TAG = "debug"
@@ -42,6 +43,11 @@ class MainActivity : AppCompatActivity() {
             createGroup.setOnClickListener{
                 // here is where we are going to jump to the create group view
                 val intent = Intent(this, CreateGroupActivity::class.java)
+                startActivity(intent)
+            }
+            map_button.setOnClickListener{
+                // here is where we are going to jump to the create group view
+                val intent = Intent(this, MapsActivity::class.java)
                 startActivity(intent)
             }
         }
