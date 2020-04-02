@@ -20,7 +20,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.gson.GsonBuilder
+import org.json.JSONObject
 
 
 var mLocationPermissionGranted = false
@@ -65,9 +65,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         val longitude = location?.longitude
                         if(longitude != null && latitude != null){
                             val currentLocation = LatLng(latitude, longitude)
-                            mMap.addMarker(MarkerOptions().position(currentLocation).title("Current Location"))
                             mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation))
-                            recyclingLocationRequest(latitude, longitude)
+                            recyclingLocationRequest(latitude, longitude, mMap)
                         }
                     }
             }
@@ -76,53 +75,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-
-    internal class RecyclingCenter(
-        val formatted_address: String, //Variable naming has to match the JSON values perfectly, hence the naming convention change
-        val geometry : Geometry,
-        val name: String,
-        val openNow: Boolean
-    ) {
-    }
-
-    internal class Centers(
-        var candidates: ArrayList<RecyclingCenter> = ArrayList(),
-        var status: String
-    ) {
-    }
-
-    internal class Geometry(
-        val location : LocationJson,
-        val viewport : Viewport
-    ){
-
-    }
-
-    internal class LocationJson(
-        val lat : Double,
-        val lng : Double
-    ){
-
-    }
-
-    internal class Viewport(
-        val northeast : LocationJson,
-        val southwest : LocationJson
-    )
-
-
-    private fun recyclingLocationRequest(latitude : Double, longitude : Double) {
+    private fun recyclingLocationRequest(latitude : Double, longitude : Double, mMap : GoogleMap) {
                 val TAG = "recyclingHTTPRequest"
                 val queue = Volley.newRequestQueue(this)
-                val url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input="
+                val url = "https://maps.googleapis.com/maps/api/place/textsearch/json?input="
                 val input = "Recycling%20Center"
                 val inputType = "&inputtype=textquery"
                 val fields = "&fields=formatted_address,name,opening_hours,geometry"
-                val radius = "&circle:32186@$latitude,$longitude"
+                val radius = "&circle:50000@$latitude,$longitude"
+//                val radius = "&point:$latitude,$longitude"
                 val key = this.resources.getString(R.string.google_places_api_key)
                 val apiKey = "&key=$key"
                 val fullQuery = url + input + inputType + fields + radius + apiKey
                 Log.d("APICall", fullQuery)
+                Log.d("APICall", "$latitude $longitude")
 
 
         // Request a string response from the provided URL.
@@ -130,23 +96,38 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     Request.Method.GET, fullQuery,
                     Response.Listener<String> { response ->
                         val a = response
-                        Log.d("json", a)
-                        val builder = GsonBuilder()
-                        builder.setPrettyPrinting()
-                        val gson = builder.create()
-                        val places: Centers = gson.fromJson(response, Centers::class.java)
-                        parseResponse(places)
+                        Log.d("APICall", a)
+                        var obj = JSONObject(response)
+                        var arr = obj.getJSONArray("results")
+                        var size = arr.length()
+                        var i = 0
+                        while(i < arr.length()){
+                            val center  = arr.getJSONObject(i)
+                            parseResponse(center, mMap)
+                            i += 1
+                        }
+
+
+
                     },
                     Response.ErrorListener { Log.d(TAG, "HTTP request failed") })
         // Add the request to the RequestQueue.
                 queue.add(stringRequest)
     }
 
-    private fun parseResponse(center : Centers){
-        val a = ""
-        for (center in center.candidates){
-            
-        }
+    private fun parseResponse(center : JSONObject, mMap : GoogleMap){
+        val lat = center.getJSONObject("geometry").getJSONObject("location").getDouble("lat")
+        val lng = center.getJSONObject("geometry").getJSONObject("location").getDouble("lng")
+        val name = center.getString("name")
+        val formattedAddress = center.getString("formatted_address")
+
+
+        mMap.addMarker(
+            MarkerOptions()
+                .position(LatLng(lat, lng))
+                .title(name)
+                .snippet("Address : ${formattedAddress}")
+        )
     }
 
     private fun getPermissions() {
