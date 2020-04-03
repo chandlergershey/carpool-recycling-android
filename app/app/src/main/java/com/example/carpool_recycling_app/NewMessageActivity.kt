@@ -27,10 +27,6 @@ class NewMessageActivity : AppCompatActivity() {
 
         val adapter = GroupAdapter<GroupieViewHolder>()
 
-//        adapter.add(UserItem())
-//        adapter.add(UserItem())
-//        adapter.add(UserItem())
-
         recyclerview_newmessage.adapter = adapter
 
         fetchUsers()
