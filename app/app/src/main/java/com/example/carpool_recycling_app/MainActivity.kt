@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -34,6 +33,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
+        //val selectPhotoButton = findViewById<Button>(R.id.selectphoto_button_register)
 
         val toggle = ActionBarDrawerToggle(
             this, drawerLayout, toolbar, 0, 0
@@ -41,6 +41,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         navView.setNavigationItemSelectedListener(this)
+
+//        selectPhotoButton.setOnClickListener {
+//            Log.d("MainActivity", "Try to show photos selector")
+//        }
+
+
     }
     override fun onStart() {
         super.onStart()
@@ -72,19 +78,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_profile -> {
+            R.id.nav_message -> {
                 Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, LatestMessagesActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_create_group -> {
-                Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Groups clicked", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, CreateGroupActivity::class.java)
                 startActivity(intent)
             }
             R.id.nav_profile -> {
-                Toast.makeText(this, "Friends clicked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, ProfileActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_profile -> {
                 Toast.makeText(this, "Update clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, ProfileActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_sign_out -> {
                 Toast.makeText(this, "Sign out clicked", Toast.LENGTH_SHORT).show()

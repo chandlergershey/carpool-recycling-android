@@ -10,12 +10,15 @@
     android:paddingLeft="15dp"
     android:paddingBottom="15dp">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/ic_launcher"
-        android:id="@+id/imageView"
-        android:layout_marginBottom="15dp"/>
+    <Button
+        android:id="@+id/selectphoto_button_register"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/rounded_select_photo_button"
+        android:text="SELECT PHOTO"
+        android:textColor="#FFFFFF"
+        app:srcCompat="@mipmap/ic_launcher" />
 
     <TextView
         android:layout_width="match_parent"
