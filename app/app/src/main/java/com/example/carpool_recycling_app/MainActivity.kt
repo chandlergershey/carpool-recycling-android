@@ -86,6 +86,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_profile -> {
                 Toast.makeText(this, "Update clicked", Toast.LENGTH_SHORT).show()
             }
+            R.id.nav_map -> {
+                Toast.makeText(this, "Map clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MapsActivity::class.java)
+                startActivity(intent)
+            }
             R.id.nav_sign_out -> {
                 Toast.makeText(this, "Sign out clicked", Toast.LENGTH_SHORT).show()
                 auth.signOut()

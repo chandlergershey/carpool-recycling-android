@@ -65,7 +65,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         val longitude = location?.longitude
                         if(longitude != null && latitude != null){
                             val currentLocation = LatLng(latitude, longitude)
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation))
+//                            mMap.animateCamera( CameraUpdateFactory.zoomTo( 17.0f ) );
+//                            mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation))
+                            val zoomLevel = 12.0f //This goes up to 21
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, zoomLevel))
                             recyclingLocationRequest(latitude, longitude, mMap)
                         }
                     }
