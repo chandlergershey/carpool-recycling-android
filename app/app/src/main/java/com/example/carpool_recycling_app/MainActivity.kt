@@ -10,9 +10,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.carpool_recycling_app.data.model.User
 import com.example.carpool_recycling_app.ui.login.LoginActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 
 val TAG = "debug"
@@ -22,6 +27,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var toolbar: Toolbar
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
+
+    companion object {
+        var currentUser: User? = null
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +55,26 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            Log.d("MainActivity", "Try to show photos selector")
 //        }
 
+        fetchCurrentUser()
+
 
     }
+
+    private fun fetchCurrentUser(){
+        val uid = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                LatestMessagesActivity.currentUser = p0.getValue(User::class.java)
+                Log.d("LatestMessages", "Current User: ${LatestMessagesActivity.currentUser}?.username")
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+        })
+    }
+
     override fun onStart() {
         super.onStart()
 //        val signOut = findViewById<Button>(R.id.signOut)
