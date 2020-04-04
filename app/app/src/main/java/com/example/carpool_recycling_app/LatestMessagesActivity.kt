@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.carpool_recycling_app.data.model.ChatMessage
 import com.example.carpool_recycling_app.data.model.User
 import com.example.carpool_recycling_app.ui.login.RegistrationActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.Item
@@ -21,6 +23,7 @@ class LatestMessagesActivity : AppCompatActivity() {
 
     companion object {
         var currentUser: User? = null
+        val TAG = "LatestMessages"
     }
 
 
@@ -29,6 +32,19 @@ class LatestMessagesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_latest_messages)
 
         recyclerview_latest_messages.adapter = adapter
+        recyclerview_latest_messages.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+
+        // set item click listener on your adapter
+
+        adapter.setOnItemClickListener{item, view ->
+            Log.d(TAG, "123")
+            val intent = Intent(this, ChatLogActivity::class.java)
+
+            val row = item as LatestMessageRow
+
+            intent.putExtra(NewMessageActivity.USER_KEY, row.chatPartnerUser)
+            startActivity(intent)
+        }
 
         listenForLatestMessages()
 
@@ -77,17 +93,6 @@ class LatestMessagesActivity : AppCompatActivity() {
         })
     }
 
-    class LatestMessageRow(val chatMessage: ChatMessage): Item<GroupieViewHolder>() {
-        override fun getLayout(): Int {
-            return R.layout.latest_message_row
-        }
-
-        override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-            viewHolder.itemView.message_textview_latest_message.text = chatMessage.text
-
-        }
-    }
-
     val adapter = GroupAdapter<GroupieViewHolder>()
 
     private fun fetchCurrentUser(){
@@ -100,13 +105,8 @@ class LatestMessagesActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(p0: DatabaseError) {
-
             }
-
-
         })
-
-
     }
 
     private fun verifyUserIsLoggedIn() {
