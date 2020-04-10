@@ -23,10 +23,10 @@
         android:id="@+id/textview_from_row"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/rounded_messages"
         android:maxWidth="240dp"
         android:padding="16dp"
-
         android:text="This is my message"
         app:layout_constraintStart_toEndOf="@+id/imageview_chat_from_row"
         app:layout_constraintTop_toTopOf="@+id/imageview_chat_from_row" />
