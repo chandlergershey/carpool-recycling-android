@@ -5,15 +5,19 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.carpool_recycling_app.data.model.User
 import com.example.carpool_recycling_app.ui.login.LoginActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 
 val TAG = "debug"
@@ -23,6 +27,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var toolbar: Toolbar
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
+
+    companion object {
+        var currentUser: User? = null
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +42,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
+        //val selectPhotoButton = findViewById<Button>(R.id.selectphoto_button_register)
 
         val toggle = ActionBarDrawerToggle(
             this, drawerLayout, toolbar, 0, 0
@@ -41,7 +50,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         navView.setNavigationItemSelectedListener(this)
+
+//        selectPhotoButton.setOnClickListener {
+//            Log.d("MainActivity", "Try to show photos selector")
+//        }
+
+        fetchCurrentUser()
+
+
     }
+
+    private fun fetchCurrentUser(){
+        val uid = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                LatestMessagesActivity.currentUser = p0.getValue(User::class.java)
+                Log.d("LatestMessages", "Current User: ${LatestMessagesActivity.currentUser}?.username")
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+        })
+    }
+
     override fun onStart() {
         super.onStart()
 //        val signOut = findViewById<Button>(R.id.signOut)
@@ -72,19 +105,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_profile -> {
+            R.id.nav_message -> {
                 Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, LatestMessagesActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_create_group -> {
-                Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Groups clicked", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, CreateGroupActivity::class.java)
                 startActivity(intent)
             }
             R.id.nav_profile -> {
-                Toast.makeText(this, "Friends clicked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, ProfileActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_profile -> {
                 Toast.makeText(this, "Update clicked", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, ProfileActivity::class.java)
+                startActivity(intent)
             }
             R.id.nav_map -> {
                 Toast.makeText(this, "Map clicked", Toast.LENGTH_SHORT).show()
