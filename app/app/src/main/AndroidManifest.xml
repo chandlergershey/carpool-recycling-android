@@ -45,9 +45,13 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_maps">
+
+        </activity>
         <activity
             android:name=".ui.login.LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_login" />
         <activity
             android:name=".MainActivity"
@@ -58,8 +62,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreateGroupActivity" />
-        <activity android:name=".ProfileActivity" />
+        <activity android:name=".CreateGroupActivity"
+                  android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".ProfileActivity"
+                  android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
