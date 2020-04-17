@@ -18,6 +18,7 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.example.carpool_recycling_app.MainActivity
+import com.example.carpool_recycling_app.ProfileSetupActivity
 
 import com.example.carpool_recycling_app.R
 import com.google.firebase.auth.FirebaseAuth
@@ -85,7 +86,7 @@ class LoginActivity : AppCompatActivity() {
                         baseContext, "Signed in!",
                         Toast.LENGTH_SHORT
                     ).show()
-                    val intent = Intent(this, MainActivity::class.java)
+                    val intent = Intent(this, ProfileSetupActivity::class.java)
                     startActivity(intent)
                 } else {
                     // If sign in fails, display a message to the user.

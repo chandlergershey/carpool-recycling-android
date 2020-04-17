@@ -7,9 +7,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -19,21 +17,34 @@ import com.example.carpool_recycling_app.data.model.User
 import com.example.carpool_recycling_app.ui.login.LoginActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
-import kotlinx.android.synthetic.main.activity_profile.*
+import com.google.firebase.database.ValueEventListener
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.latest_message_row.view.*
 import kotlinx.android.synthetic.main.profile.*
-import java.util.*
 
 class ProfileActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private lateinit var selectPhotoButton: Button
-    private lateinit var saveProfileButton: Button
-    private lateinit var userNameEditText: EditText
+    private lateinit var userNameTextView: TextView
+    private lateinit var numPlasticTextView: TextView
+    private lateinit var numGlassTextView: TextView
+    private lateinit var numCardboardTextView: TextView
+    private lateinit var numAluminumTextView: TextView
+    private lateinit var addRecyclablesButton: Button
+    private lateinit var editProfile: ImageButton
     private lateinit var auth: FirebaseAuth
+    private lateinit var profilePictureImageView: ImageView
     lateinit var toolbar: Toolbar
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
+
+    var username: String = ""
+    var numPlastic: Int = 0
+    var numGlass: Int = 0
+    var numCardboard: Int = 0
+    var numAluminum: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,84 +63,65 @@ class ProfileActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         navView.setNavigationItemSelectedListener(this)
+
+
     }
 
     override fun onStart() {
         super.onStart()
-        selectPhotoButton = findViewById(R.id.selectphoto_button_register)
-        saveProfileButton = findViewById(R.id.saveprofile_button)
-        userNameEditText = findViewById(R.id.username_edittext)
+        fetchCurrentUser()
+        userNameTextView = findViewById(R.id.profile_username_textview)
+        numPlasticTextView = findViewById(R.id.profile_numplastic_textview)
+        numAluminumTextView = findViewById(R.id.profile_numaluminum_textview)
+        numGlassTextView = findViewById(R.id.profile_numglass_textview)
+        numCardboardTextView = findViewById(R.id.profile_numcardboard_textview)
+        addRecyclablesButton = findViewById(R.id.profile_addrecyclables_button)
+        editProfile = findViewById(R.id.profile_settings_imagebutton)
+        profilePictureImageView = findViewById(R.id.selectphoto_imageview_register)
 
-        selectPhotoButton.setOnClickListener {
-            Log.d("ProfileActivity", "Submit group button clicked")
-
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, 0)
-
-        }
-
-        saveProfileButton.setOnClickListener {
-            uploadImageToFirebaseStorage()
-        }
-
-    }
-
-    var selectedPhotoUri: Uri? = null
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
-            // proceed and check what the selected image was
-            Log.d("ProfileActivity", "Photo was selected")
-
-            selectedPhotoUri = data.data
-            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
-
-//            val bitmapDrawable = BitmapDrawable(bitmap)
-//            selectPhotoButton.setBackgroundDrawable(bitmapDrawable)
-
-            selectphoto_imageview_register.setImageBitmap(bitmap)
-
-            selectphoto_button_register.alpha = 0f
-
-        }
-    }
-
-    private fun uploadImageToFirebaseStorage(){
-
-        if(selectedPhotoUri == null) return
-        val filename = UUID.randomUUID().toString()
-        val ref = FirebaseStorage.getInstance().getReference("/images/$filename")
-
-        ref.putFile(selectedPhotoUri!!).addOnSuccessListener {
-            Log.d("ProfileActivity", "Successfully uploaded image")
-
-            ref.downloadUrl.addOnSuccessListener {
-                it.toString()
-                Log.d("ProfileActivity", "File Location: $it")
-
-                saveUserToFirebaseDatabase(it.toString())
-            }
-        }.addOnFailureListener {
-
-        }
-    }
-
-    private fun saveUserToFirebaseDatabase(profileImageUrl: String){
-        val uid = FirebaseAuth.getInstance().uid ?: ""
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
-
-        val user = User(uid, userNameEditText.text.toString(), profileImageUrl, "", "", 0, 0, 0, 0, "")
-
-        ref.setValue(user).addOnSuccessListener {
-            Log.d("ProfileActivity", "We saved the user to Firebase Database")
-
-            val intent = Intent(this, LatestMessagesActivity::class.java)
-            //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+        addRecyclablesButton.setOnClickListener {
+            //Log.d("ProfileActivity", "Submit group button clicked")
+            val intent = Intent(this, AddRecyclablesActivity::class.java)
             startActivity(intent)
         }
+
+        editProfile.setOnClickListener{
+            val intent = Intent(this, EditProfileActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun fetchCurrentUser() {
+        val uid = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+//        Log.d("ProfileActivity", "Current User: $ref")
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                val currentUser = p0.getValue(User::class.java)
+
+                Picasso.get().load(currentUser?.profileImageUrl).into(profilePictureImageView)
+
+                username = currentUser?.username.toString()
+                numAluminum = currentUser!!.numAluminum
+                numCardboard = currentUser!!.numPaper
+                numGlass = currentUser!!.numGlass
+                numPlastic = currentUser!!.numPlastic
+
+                userNameTextView.setText("@" + username)
+                numGlassTextView.setText(numGlass.toString())
+                numAluminumTextView.setText(numAluminum.toString())
+                numCardboardTextView.setText(numCardboard.toString())
+                numPlasticTextView.setText(numPlastic.toString())
+
+                Log.d("ProfileActivity", "Current User: $username")
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+            }
+        })
+
+
+
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

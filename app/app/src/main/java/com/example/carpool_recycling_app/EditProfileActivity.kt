@@ -10,26 +10,36 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.core.net.toUri
 import com.example.carpool_recycling_app.data.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_profile_setup.*
 import java.util.*
 
-class ProfileSetupActivity : AppCompatActivity() {
+class EditProfileActivity : AppCompatActivity() {
 
     private lateinit var selectPhotoButton: Button
     private lateinit var saveProfileButton: Button
     private lateinit var firstNameEditText: EditText
     private lateinit var lastNameEditText: EditText
     private lateinit var userNameEditText: EditText
+    var username: String = ""
+    var selectedPhotoUri: Uri? = null
+    var currentPhotoUri: Uri? = null
+    var currentFirstName: String = ""
+    var currentLastName: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile_setup)
+        setContentView(R.layout.activity_edit_profile)
     }
 
     override fun onStart() {
@@ -54,7 +64,7 @@ class ProfileSetupActivity : AppCompatActivity() {
         }
     }
 
-    var selectedPhotoUri: Uri? = null
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -66,8 +76,6 @@ class ProfileSetupActivity : AppCompatActivity() {
             selectedPhotoUri = data.data
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
 
-//            val bitmapDrawable = BitmapDrawable(bitmap)
-//            selectPhotoButton.setBackgroundDrawable(bitmapDrawable)
 
             setup_selectphoto_imageview.setImageBitmap(bitmap)
 
@@ -100,7 +108,17 @@ class ProfileSetupActivity : AppCompatActivity() {
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
-        val user = User(uid, userNameEditText.text.toString(), profileImageUrl, firstNameEditText.text.toString(), lastNameEditText.text.toString(), 0, 0, 0, 0, "0", false)
+        if(lastNameEditText.text.toString() != null){
+            currentLastName = lastNameEditText.text.toString()
+        }
+        if(firstNameEditText.text.toString() != null){
+            currentFirstName = firstNameEditText.text.toString()
+        }
+        if(selectedPhotoUri != null){
+            currentPhotoUri = selectedPhotoUri
+        }
+
+        val user = User(uid, username, profileImageUrl, currentFirstName, currentLastName, 0, 0, 0, 0, "0", false)
 
         ref.setValue(user).addOnSuccessListener {
             Log.d("ProfileSetupActivity", "We saved the user to Firebase Database")
@@ -109,4 +127,29 @@ class ProfileSetupActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+
+
+    private fun fetchCurrentUser() {
+        val uid = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+//        Log.d("ProfileActivity", "Current User: $ref")
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                val currentUser = p0.getValue(User::class.java)
+
+                // Here we get all the previous states of the user's values
+                username = currentUser?.username.toString()
+                currentPhotoUri = Uri.parse(currentUser?.profileImageUrl)
+                currentFirstName = currentUser?.profileImageUrl.toString()
+                currentLastName = currentUser?.profileImageUrl.toString()
+
+                Log.d("ProfileActivity", "Current User: $username")
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+            }
+        })
+    }
+
 }
