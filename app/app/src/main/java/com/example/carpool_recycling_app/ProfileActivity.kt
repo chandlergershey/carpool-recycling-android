@@ -121,7 +121,7 @@ class ProfileActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
-        val user = User(uid, userNameEditText.text.toString(), profileImageUrl)
+        val user = User(uid, userNameEditText.text.toString(), profileImageUrl, "", "", 0, 0, 0, 0, "")
 
         ref.setValue(user).addOnSuccessListener {
             Log.d("ProfileActivity", "We saved the user to Firebase Database")
