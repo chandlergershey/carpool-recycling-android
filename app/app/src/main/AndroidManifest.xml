@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.carpool_recycling_app">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -18,7 +17,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ProfileSetupActivity"></activity>
+        <activity android:name=".AddRecyclablesActivity"></activity>
+        <activity android:name=".EditProfileActivity" />
+        <activity android:name=".ProfileSetupActivity" />
         <activity android:name=".ChatLogActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -31,9 +32,8 @@
         </activity>
         <activity
             android:name=".LatestMessagesActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.login.RegistrationActivity" />
-
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -48,14 +48,12 @@
 
         <activity
             android:name=".MapsActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/title_activity_maps">
-
-        </activity>
+            android:label="@string/title_activity_maps"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.login.LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/title_activity_login" />
+            android:label="@string/title_activity_login"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -65,10 +63,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreateGroupActivity"
-                  android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".ProfileActivity"
-                  android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".CreateGroupActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

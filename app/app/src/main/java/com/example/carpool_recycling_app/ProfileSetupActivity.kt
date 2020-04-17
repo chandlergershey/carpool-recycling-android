@@ -100,13 +100,12 @@ class ProfileSetupActivity : AppCompatActivity() {
         val uid = FirebaseAuth.getInstance().uid ?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
-        val user = User(uid, userNameEditText.text.toString(), profileImageUrl, firstNameEditText.text.toString(), lastNameEditText.text.toString(), 0, 0, 0, 0, "0")
+        val user = User(uid, userNameEditText.text.toString(), profileImageUrl, firstNameEditText.text.toString(), lastNameEditText.text.toString(), 0, 0, 0, 0, "0", false)
 
         ref.setValue(user).addOnSuccessListener {
             Log.d("ProfileSetupActivity", "We saved the user to Firebase Database")
 
-            val intent = Intent(this, LatestMessagesActivity::class.java)
-            //intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
     }
