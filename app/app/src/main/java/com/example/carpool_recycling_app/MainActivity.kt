@@ -117,12 +117,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_profile -> {
                 Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, ProfileActivity::class.java)
+                val intent = Intent(this, ProfileSetupActivity::class.java)
                 startActivity(intent)
             }
             R.id.nav_profile -> {
                 Toast.makeText(this, "Update clicked", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, ProfileActivity::class.java)
+                val intent = Intent(this, ProfileSetupActivity::class.java)
                 startActivity(intent)
             }
             R.id.nav_map -> {
