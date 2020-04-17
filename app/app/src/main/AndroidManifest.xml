@@ -28,7 +28,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".LatestMessagesActivity" />
         </activity>
-        <activity android:name=".LatestMessagesActivity" />
+        <activity
+            android:name=".LatestMessagesActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ui.login.RegistrationActivity" />
 
         <!--
