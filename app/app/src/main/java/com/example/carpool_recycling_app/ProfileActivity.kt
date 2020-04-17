@@ -7,10 +7,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -24,6 +21,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.latest_message_row.view.*
 import kotlinx.android.synthetic.main.profile.*
 
 class ProfileActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -36,6 +35,7 @@ class ProfileActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private lateinit var addRecyclablesButton: Button
     private lateinit var editProfile: ImageButton
     private lateinit var auth: FirebaseAuth
+    private lateinit var profilePictureImageView: ImageView
     lateinit var toolbar: Toolbar
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
@@ -77,6 +77,7 @@ class ProfileActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         numCardboardTextView = findViewById(R.id.profile_numcardboard_textview)
         addRecyclablesButton = findViewById(R.id.profile_addrecyclables_button)
         editProfile = findViewById(R.id.profile_settings_imagebutton)
+        profilePictureImageView = findViewById(R.id.selectphoto_imageview_register)
 
         addRecyclablesButton.setOnClickListener {
             //Log.d("ProfileActivity", "Submit group button clicked")
@@ -98,6 +99,8 @@ class ProfileActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             override fun onDataChange(p0: DataSnapshot) {
                 val currentUser = p0.getValue(User::class.java)
 
+                Picasso.get().load(currentUser?.profileImageUrl).into(profilePictureImageView)
+
                 username = currentUser?.username.toString()
                 numAluminum = currentUser!!.numAluminum
                 numCardboard = currentUser!!.numPaper
@@ -116,28 +119,9 @@ class ProfileActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             override fun onCancelled(p0: DatabaseError) {
             }
         })
-    }
 
-    var selectedPhotoUri: Uri? = null
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
-            // proceed and check what the selected image was
-            Log.d("ProfileActivity", "Photo was selected")
-
-            selectedPhotoUri = data.data
-            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedPhotoUri)
-
-//            val bitmapDrawable = BitmapDrawable(bitmap)
-//            selectPhotoButton.setBackgroundDrawable(bitmapDrawable)
-
-            selectphoto_imageview_register.setImageBitmap(bitmap)
-
-            selectphoto_button_register.alpha = 0f
-
-        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
