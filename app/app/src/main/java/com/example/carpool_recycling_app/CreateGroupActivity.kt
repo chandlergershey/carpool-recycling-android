@@ -29,6 +29,8 @@ class CreateGroupActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
 
+    var name: String = ""
+    var group: SimpleGroup? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +66,7 @@ class CreateGroupActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     private fun saveNewGroup() {
-        val name = groupName.text.toString().trim()
+        name = groupName.text.toString().trim()
 
         // checks to see if the name of the simple group is empty
         if(name.isEmpty()) {
@@ -76,7 +78,7 @@ class CreateGroupActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         val groupId = ref.push().key
 
-        val group = SimpleGroup(groupId, name)
+        group = SimpleGroup(groupId, name)
 
         if(groupId != null){
             ref.child(groupId).setValue(group).addOnCompleteListener{
