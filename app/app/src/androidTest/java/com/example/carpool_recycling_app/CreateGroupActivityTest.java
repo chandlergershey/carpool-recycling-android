@@ -51,6 +51,17 @@ public class CreateGroupActivityTest extends ActivityTestRule<CreateGroupActivit
         assertEquals("My New Group", mCreateGroupActivity.getName());
     }
 
+    @Test
+    public void testSaveNewGroupError() {
+        TextView groupName = mCreateGroupActivity.findViewById(R.id.group_name_edit_text);
+        groupName.setText("");
+
+        Button submit = mCreateGroupActivity.findViewById(R.id.submit_group_button);
+        submit.performClick();
+
+        assertEquals(null, mCreateGroupActivity.getGroup());
+        assertEquals("Please enter a group name", groupName.getError());
+    }
 
 
 
