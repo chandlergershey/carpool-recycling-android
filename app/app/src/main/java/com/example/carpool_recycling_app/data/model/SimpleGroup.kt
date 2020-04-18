@@ -5,5 +5,7 @@ import com.google.firebase.database.IgnoreExtraProperties
 @IgnoreExtraProperties
 data class SimpleGroup(
     var id: String? = "",
-    var groupName: String? = ""
+    var groupName: String? = "",
+    var adminId: String? = "",
+    var inRoute: Boolean = false
 )
