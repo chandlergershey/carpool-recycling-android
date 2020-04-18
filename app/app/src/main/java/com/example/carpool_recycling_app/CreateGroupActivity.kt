@@ -13,7 +13,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.carpool_recycling_app.data.model.SimpleGroup
-import com.example.carpool_recycling_app.data.model.User
 import com.example.carpool_recycling_app.data.model.UserInGroup
 import com.example.carpool_recycling_app.ui.login.LoginActivity
 import com.google.android.material.navigation.NavigationView
@@ -33,6 +32,7 @@ class CreateGroupActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
 
+    var name: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +70,7 @@ class CreateGroupActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     private fun saveNewGroup() {
-        val name = groupName.text.toString().trim()
+        name = groupName.text.toString().trim()
         val uid = FirebaseAuth.getInstance().uid
 
         // checks to see if the name of the simple group is empty
