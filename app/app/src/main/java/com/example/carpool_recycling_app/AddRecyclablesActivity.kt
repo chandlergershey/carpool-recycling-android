@@ -30,6 +30,11 @@ class AddRecyclablesActivity : AppCompatActivity() {
     var numCardboard: Int = 0
     var numAluminum: Int = 0
 
+    var totalPlastic: Int = 0
+    var totalGlass: Int = 0
+    var totalCardboard: Int = 0
+    var totalAluminum: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_recyclables)
@@ -98,10 +103,10 @@ class AddRecyclablesActivity : AppCompatActivity() {
             enteredAluminum = Integer.parseInt(numAluminumTextView.text.toString())
         }
 
-        val totalPlastic = numPlastic + enteredPlastic
-        val totalGlass = numGlass + enteredGlass
-        val totalCardboard = numCardboard + enteredCardboard
-        val totalAluminum = numAluminum + enteredAluminum
+        totalPlastic = numPlastic + enteredPlastic
+        totalGlass = numGlass + enteredGlass
+        totalCardboard = numCardboard + enteredCardboard
+        totalAluminum = numAluminum + enteredAluminum
 
         refPlastic.setValue(totalPlastic).addOnSuccessListener {
             Log.d("AddRecyclablesActivity", "Saved plastic total")

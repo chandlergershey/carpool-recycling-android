@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.carpool_recycling_app.data.model.SimpleGroup
+import com.example.carpool_recycling_app.data.model.UserInGroup
 import com.example.carpool_recycling_app.ui.login.LoginActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -24,11 +25,14 @@ class CreateGroupActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     private lateinit var auth: FirebaseAuth
     private lateinit var groupName: EditText
+    private lateinit var joinGroupName: EditText
     private lateinit var submitGroupButton: Button
+    private lateinit var joinGroupButton: Button
     lateinit var toolbar: Toolbar
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
 
+    var name: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,19 +56,22 @@ class CreateGroupActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     override fun onStart() {
         super.onStart()
         submitGroupButton = findViewById<Button>(R.id.submit_group_button)
+        joinGroupButton = findViewById<Button>(R.id.join_group_button)
         groupName = findViewById<EditText>(R.id.group_name_edit_text)
+        joinGroupName = findViewById(R.id.join_group_edit_text)
         submitGroupButton.setOnClickListener {
             Log.d("CreateGroup", "Submit group button clicked")
-
-
             saveNewGroup()
-
+        }
+        joinGroupButton.setOnClickListener {
+            joinNewGroup()
         }
 
     }
 
     private fun saveNewGroup() {
-        val name = groupName.text.toString().trim()
+        name = groupName.text.toString().trim()
+        val uid = FirebaseAuth.getInstance().uid
 
         // checks to see if the name of the simple group is empty
         if(name.isEmpty()) {
@@ -72,18 +79,70 @@ class CreateGroupActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             return
         }
 
-        val ref = FirebaseDatabase.getInstance().getReference("groups")
+        val refGroups = FirebaseDatabase.getInstance().getReference("groups")
 
-        val groupId = ref.push().key
 
-        val group = SimpleGroup(groupId, name)
+
+        val groupId = refGroups.push().key
+
+        val group = SimpleGroup(groupId, name, uid, false)
+
+        val refUserInGroups = FirebaseDatabase.getInstance().getReference("user-in-groups")
+
+
+
+        val userInGroup = UserInGroup(uid)
 
         if(groupId != null){
-            ref.child(groupId).setValue(group).addOnCompleteListener{
-                Toast.makeText(applicationContext, "Hero saved successfully", Toast.LENGTH_LONG).show()
+            refGroups.child(groupId).setValue(group).addOnCompleteListener{
+                Toast.makeText(applicationContext, "Group saved successfully", Toast.LENGTH_LONG).show()
+                val intent = Intent(this, GroupActivity::class.java)
+                startActivity(intent)
             }
+
+            refUserInGroups.child(name).setValue(userInGroup).addOnCompleteListener {
+                Toast.makeText(applicationContext, "User saved to group successfully", Toast.LENGTH_LONG).show()
+            }
+
+
         }
+
+        //addGroupToUserProfile(joinGroupName.text.toString())
+
+
     }
+
+    private fun joinNewGroup(){
+        val uid = FirebaseAuth.getInstance().uid
+        val joinGroupNameString = joinGroupName.text.toString()
+        val refUserInGroups = FirebaseDatabase.getInstance().getReference("user-in-groups")
+
+        val userInGroup = UserInGroup(uid)
+
+        // want to add logic here to prevent a user from accessing a non-existent group
+        refUserInGroups.child(joinGroupNameString).setValue(userInGroup).addOnCompleteListener{
+            Toast.makeText(applicationContext, "Group saved successfully", Toast.LENGTH_LONG).show()
+            val intent = Intent(this, GroupActivity::class.java)
+            startActivity(intent)
+        }
+
+        //addGroupToUserProfile(joinGroupName.text.toString())
+
+
+    }
+
+//    private fun addGroupToUserProfile(groupid: String){
+//        val uid = FirebaseAuth.getInstance().uid ?: ""
+//        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid/groupid")
+//
+//        val groupUid = UserInGroup(groupid)
+//
+//        ref.setValue(groupUid).addOnSuccessListener {
+//            Log.d("CreateGroupActivity", "We saved the group in user profile")
+//        }
+//
+//
+//    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
