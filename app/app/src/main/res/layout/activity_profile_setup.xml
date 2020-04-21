@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/setup_selectphoto_button"
+        android:id="@+id/editprofile_selectphoto_button"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="46dp"
@@ -19,23 +19,23 @@
 
 
     <Button
-        android:id="@+id/setup_saveprofile_button"
+        android:id="@+id/editprofile_saveprofile_button"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Save Profile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/setup_lastname_edittext" />
+        app:layout_constraintTop_toBottomOf="@+id/editprofile_lastname_edittext" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/setup_selectphoto_imageview"
+        android:id="@+id/editprofile_selectphoto_imageview"
         android:layout_width="100dp"
         android:layout_height="100dp"
         app:civ_border_width="3dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/setup_selectphoto_button" />
+        app:layout_constraintTop_toTopOf="@+id/editprofile_selectphoto_button" />
 
     <EditText
         android:id="@+id/setup_username_edittext"
@@ -47,10 +47,10 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/setup_selectphoto_button" />
+        app:layout_constraintTop_toBottomOf="@+id/editprofile_selectphoto_button" />
 
     <EditText
-        android:id="@+id/setup_firstname_edittext"
+        android:id="@+id/editprofile_firstname_edittext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -62,7 +62,7 @@
         app:layout_constraintTop_toBottomOf="@+id/setup_username_edittext" />
 
     <EditText
-        android:id="@+id/setup_lastname_edittext"
+        android:id="@+id/editprofile_lastname_edittext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -71,7 +71,7 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/setup_firstname_edittext" />
+        app:layout_constraintTop_toBottomOf="@+id/editprofile_firstname_edittext" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
