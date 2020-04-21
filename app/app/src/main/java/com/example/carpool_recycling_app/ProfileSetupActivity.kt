@@ -9,13 +9,10 @@ import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import com.example.carpool_recycling_app.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.activity_profile_setup.*
 import java.util.*
 
@@ -34,10 +31,10 @@ class ProfileSetupActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        selectPhotoButton = findViewById(R.id.setup_selectphoto_button)
-        saveProfileButton = findViewById(R.id.setup_saveprofile_button)
-        firstNameEditText = findViewById(R.id.setup_firstname_edittext)
-        lastNameEditText = findViewById(R.id.setup_lastname_edittext)
+        selectPhotoButton = findViewById(R.id.editprofile_selectphoto_button)
+        saveProfileButton = findViewById(R.id.editprofile_saveprofile_button)
+        firstNameEditText = findViewById(R.id.editprofile_firstname_edittext)
+        lastNameEditText = findViewById(R.id.editprofile_lastname_edittext)
         userNameEditText = findViewById(R.id.setup_username_edittext)
 
         val thisUser = FirebaseAuth.getInstance().uid
@@ -69,9 +66,9 @@ class ProfileSetupActivity : AppCompatActivity() {
 //            val bitmapDrawable = BitmapDrawable(bitmap)
 //            selectPhotoButton.setBackgroundDrawable(bitmapDrawable)
 
-            setup_selectphoto_imageview.setImageBitmap(bitmap)
+            editprofile_selectphoto_imageview.setImageBitmap(bitmap)
 
-            setup_selectphoto_button.alpha = 0f
+            editprofile_selectphoto_button.alpha = 0f
 
         }
     }

@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.profile.*
 class ProfileActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var userNameTextView: TextView
+    private lateinit var nameTextView: TextView
     private lateinit var numPlasticTextView: TextView
     private lateinit var numGlassTextView: TextView
     private lateinit var numCardboardTextView: TextView
@@ -41,6 +42,8 @@ class ProfileActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     lateinit var navView: NavigationView
 
     var username: String = ""
+    var firstname: String = ""
+    var lastname: String = ""
     var numPlastic: Int = 0
     var numGlass: Int = 0
     var numCardboard: Int = 0
@@ -71,6 +74,7 @@ class ProfileActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         super.onStart()
         fetchCurrentUser()
         userNameTextView = findViewById(R.id.profile_username_textview)
+        nameTextView = findViewById(R.id.profile_name_textview)
         numPlasticTextView = findViewById(R.id.profile_numplastic_textview)
         numAluminumTextView = findViewById(R.id.profile_numaluminum_textview)
         numGlassTextView = findViewById(R.id.profile_numglass_textview)
@@ -102,12 +106,15 @@ class ProfileActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 Picasso.get().load(currentUser?.profileImageUrl).into(profilePictureImageView)
 
                 username = currentUser?.username.toString()
+                firstname = currentUser?.firstname.toString()
+                lastname = currentUser?.lastname.toString()
                 numAluminum = currentUser!!.numAluminum
                 numCardboard = currentUser!!.numPaper
                 numGlass = currentUser!!.numGlass
                 numPlastic = currentUser!!.numPlastic
 
                 userNameTextView.setText("@" + username)
+                nameTextView.setText(firstname + " " + lastname)
                 numGlassTextView.setText(numGlass.toString())
                 numAluminumTextView.setText(numAluminum.toString())
                 numCardboardTextView.setText(numCardboard.toString())
