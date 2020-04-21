@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
-
+apply plugin: "kotlin-kapt"
 apply plugin: 'kotlin-android-extensions'
 
 androidExtensions {
@@ -29,6 +29,17 @@ android {
 }
 
 dependencies {
+    def room_version = "2.2.5"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.legacy:legacy-support-v4:1.0.0"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // Test helpers
+    testImplementation "androidx.room:room-testing:$room_version"
+    implementation 'com.yundom:kache:1.0.5'
     implementation 'com.google.firebase:firebase-auth:19.3.0'
     implementation 'com.facebook.android:facebook-android-sdk:4.41.0'
     implementation 'com.google.firebase:firebase-analytics:17.2.3'

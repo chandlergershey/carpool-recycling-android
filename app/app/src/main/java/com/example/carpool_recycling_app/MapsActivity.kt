@@ -1,6 +1,7 @@
 package com.example.carpool_recycling_app
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -30,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import org.json.JSONObject
+import java.io.*
 
 
 var mLocationPermissionGranted = false
@@ -40,6 +42,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnN
     lateinit var toolbar: Toolbar
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
+    lateinit var cache: HashMap<Pair<Double, Double>, ArrayList<Array<String>>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +50,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnN
         auth = FirebaseAuth.getInstance() //connects to DB
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
         //val selectPhotoButton = findViewById<Button>(R.id.selectphoto_button_register)
@@ -58,6 +60,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnN
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         navView.setNavigationItemSelectedListener(this)
+        loadCache()
         val mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -65,6 +68,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnN
         mapFragment.getMapAsync(this)
     }
 
+    fun loadCache() {
+        val file_path = this.applicationContext.filesDir
+        val file = File(file_path, "cache")
+        val ois = ObjectInputStream(FileInputStream(file))
+        val map = ois.readObject() as HashMap<*, *>
+        cache = map as HashMap<Pair<Double, Double>, ArrayList<Array<String>>>
+    }
+
+    fun saveCache() {
+        val file_path = this.applicationContext.filesDir
+        val file = File(file_path, "cache")
+        val outputStream = ObjectOutputStream(FileOutputStream(file))
+        outputStream.writeObject(cache)
+        outputStream.flush()
+        outputStream.close()
+    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -75,7 +94,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnN
      * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
+        val TAG = "recyclingHTTPRequest"
         mMap = googleMap
+        var cacheValue = ArrayList<Array<String>>()
         mMap.isMyLocationEnabled = true
         var fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         try {
@@ -83,15 +104,30 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnN
                 fusedLocationClient.lastLocation
                     .addOnSuccessListener { location : Location? ->
                         // Got last known location. In some rare situations this can be null.
-                        val latitude = location?.latitude
-                        val longitude = location?.longitude
+                        var latitude = location?.latitude
+                        var longitude = location?.longitude
                         if(longitude != null && latitude != null){
+                            latitude = "%.2f".format(latitude).toDouble()
+                            longitude = "%.2f".format(longitude).toDouble()
                             val currentLocation = LatLng(latitude, longitude)
-//                            mMap.animateCamera( CameraUpdateFactory.zoomTo( 17.0f ) );
-//                            mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation))
                             val zoomLevel = 12.0f //This goes up to 21
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, zoomLevel))
-                            recyclingLocationRequest(latitude, longitude, mMap)
+
+                            val key = Pair(latitude, longitude)
+                            Log.d(TAG, latitude.toString())
+                            Log.d(TAG, longitude.toString())
+                            if(cache.contains(key)){
+                                    Log.d(TAG, "Cache hit")
+                                    val markers = cache.get(key)
+                                    for(center: Array<String> in markers!!){
+                                        if(center.size == 4){
+                                            parseResponse(center[0].toDouble(), center[1].toDouble(), center[2], center[3], mMap)
+                                        }
+                                    }
+                            }
+                            else {
+                                recyclingLocationRequest(latitude, longitude, mMap, key)
+                            }
                         }
                     }
             }
@@ -100,7 +136,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnN
         }
     }
 
-    private fun recyclingLocationRequest(latitude : Double, longitude : Double, mMap : GoogleMap) {
+    private fun recyclingLocationRequest(latitude : Double, longitude : Double, mMap : GoogleMap, key : Pair<Double, Double>) {
                 val TAG = "recyclingHTTPRequest"
                 val queue = Volley.newRequestQueue(this)
                 val url = "https://maps.googleapis.com/maps/api/place/textsearch/json?input="
@@ -109,49 +145,46 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnN
                 val fields = "&fields=formatted_address,name,opening_hours,geometry"
                 val radius = "&circle:50000@$latitude,$longitude"
 //                val radius = "&point:$latitude,$longitude"
-                val key = this.resources.getString(R.string.google_places_api_key)
-                val apiKey = "&key=$key"
+                val placesKey = this.resources.getString(R.string.google_places_api_key)
+                val apiKey = "&key=$placesKey"
                 val fullQuery = url + input + inputType + fields + radius + apiKey
                 Log.d("APICall", fullQuery)
                 Log.d("APICall", "$latitude $longitude")
-
+                var cacheLocation = ArrayList<Array<String>>()
 
         // Request a string response from the provided URL.
                 val stringRequest = StringRequest(
                     Request.Method.GET, fullQuery,
                     Response.Listener<String> { response ->
                         val a = response
-                        Log.d("APICall", a)
                         var obj = JSONObject(response)
                         var arr = obj.getJSONArray("results")
                         var size = arr.length()
                         var i = 0
                         while(i < arr.length()){
                             val center  = arr.getJSONObject(i)
-                            parseResponse(center, mMap)
+                            val lat = center.getJSONObject("geometry").getJSONObject("location").getDouble("lat")
+                            val lng = center.getJSONObject("geometry").getJSONObject("location").getDouble("lng")
+                            val name = center.getString("name")
+                            val formattedAddress = center.getString("formatted_address")
+                            parseResponse(lat, lng, name, formattedAddress, mMap)
+                            var cacheData = arrayOf(lat.toString(), lng.toString(), name, formattedAddress)
+                            cacheLocation.add(cacheData)
                             i += 1
                         }
-
-
-
+                        cache[key] = cacheLocation
                     },
                     Response.ErrorListener { Log.d(TAG, "HTTP request failed") })
         // Add the request to the RequestQueue.
                 queue.add(stringRequest)
     }
 
-    private fun parseResponse(center : JSONObject, mMap : GoogleMap){
-        val lat = center.getJSONObject("geometry").getJSONObject("location").getDouble("lat")
-        val lng = center.getJSONObject("geometry").getJSONObject("location").getDouble("lng")
-        val name = center.getString("name")
-        val formattedAddress = center.getString("formatted_address")
-
-
+    private fun parseResponse(lat : Double, lng : Double, name : String, formattedAddress : String,  mMap : GoogleMap){
         mMap.addMarker(
             MarkerOptions()
                 .position(LatLng(lat, lng))
                 .title(name)
-                .snippet("Address : ${formattedAddress}")
+                .snippet("Address : $formattedAddress")
         )
     }
 
@@ -198,6 +231,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnN
             }
         }
     }
+
+    override fun onStop() {
+        super.onStop()
+        saveCache()
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_message -> {
