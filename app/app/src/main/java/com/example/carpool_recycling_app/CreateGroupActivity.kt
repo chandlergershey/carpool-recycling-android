@@ -36,6 +36,10 @@ class CreateGroupActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+//        val intent = Intent(this, GroupActivity::class.java)
+//        startActivity(intent)
+
         setContentView(R.layout.activity_create_group)
         auth = FirebaseAuth.getInstance() //connects to DB
         toolbar = findViewById(R.id.toolbar)
@@ -55,6 +59,7 @@ class CreateGroupActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     override fun onStart() {
         super.onStart()
+
         submitGroupButton = findViewById<Button>(R.id.submit_group_button)
         joinGroupButton = findViewById<Button>(R.id.join_group_button)
         groupName = findViewById<EditText>(R.id.group_name_edit_text)
@@ -80,69 +85,49 @@ class CreateGroupActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         }
 
         val refGroups = FirebaseDatabase.getInstance().getReference("groups")
-
-
-
         val groupId = refGroups.push().key
-
         val group = SimpleGroup(groupId, name, uid, false)
-
-        val refUserInGroups = FirebaseDatabase.getInstance().getReference("user-in-groups")
-
-
-
-        val userInGroup = UserInGroup(uid)
+        val refUserInGroups = FirebaseDatabase.getInstance().getReference("user-in-groups/$name/$uid")
+        val refUsersGroupsProperty = FirebaseDatabase.getInstance().getReference("users/$uid/groupid")
 
         if(groupId != null){
-            refGroups.child(groupId).setValue(group).addOnCompleteListener{
+            refGroups.child(name).setValue(group).addOnCompleteListener{
                 Toast.makeText(applicationContext, "Group saved successfully", Toast.LENGTH_LONG).show()
+            }
+
+            refUserInGroups.setValue("").addOnSuccessListener {
+                Log.d("ProfileSetupActivity", "We saved the user to Firebase Database")
+            }
+
+            refUsersGroupsProperty.setValue(name).addOnSuccessListener {
                 val intent = Intent(this, GroupActivity::class.java)
                 startActivity(intent)
             }
 
-            refUserInGroups.child(name).setValue(userInGroup).addOnCompleteListener {
-                Toast.makeText(applicationContext, "User saved to group successfully", Toast.LENGTH_LONG).show()
-            }
-
 
         }
-
-        //addGroupToUserProfile(joinGroupName.text.toString())
-
 
     }
 
     private fun joinNewGroup(){
         val uid = FirebaseAuth.getInstance().uid
         val joinGroupNameString = joinGroupName.text.toString()
-        val refUserInGroups = FirebaseDatabase.getInstance().getReference("user-in-groups")
+        val refUserInGroups = FirebaseDatabase.getInstance().getReference("user-in-groups/$joinGroupNameString/$uid")
 
-        val userInGroup = UserInGroup(uid)
 
-        // want to add logic here to prevent a user from accessing a non-existent group
-        refUserInGroups.child(joinGroupNameString).setValue(userInGroup).addOnCompleteListener{
-            Toast.makeText(applicationContext, "Group saved successfully", Toast.LENGTH_LONG).show()
+        val refUsersGroupsProperty = FirebaseDatabase.getInstance().getReference("users/$uid/groupid")
+
+
+        refUserInGroups.setValue("").addOnSuccessListener {
+            Log.d("AddRecyclablesActivity", "Saved plastic total")
+        }
+
+        // good to go
+        refUsersGroupsProperty.setValue(joinGroupNameString).addOnSuccessListener {
             val intent = Intent(this, GroupActivity::class.java)
             startActivity(intent)
         }
-
-        //addGroupToUserProfile(joinGroupName.text.toString())
-
-
     }
-
-//    private fun addGroupToUserProfile(groupid: String){
-//        val uid = FirebaseAuth.getInstance().uid ?: ""
-//        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid/groupid")
-//
-//        val groupUid = UserInGroup(groupid)
-//
-//        ref.setValue(groupUid).addOnSuccessListener {
-//            Log.d("CreateGroupActivity", "We saved the group in user profile")
-//        }
-//
-//
-//    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
